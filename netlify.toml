@@ -1,7 +1,0 @@
-[build]
-  command = "pip install -r requirements.txt"  # 必要なPythonライブラリのインストールコマンド
-  publish = "public"  # 静的ファイルを配置するディレクトリ（必要な場合のみ）
-
-[functions]
-  directory = "netlify/functions"  # Functionsディレクトリを指定
-
