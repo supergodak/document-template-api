@@ -3,5 +3,5 @@
   publish = "public"  # 静的ファイルを配置するディレクトリ（必要な場合のみ）
 
 [functions]
-  directory = "functions"  # Functionsディレクトリを指定
+  directory = "netlify/functions"  # Functionsディレクトリを指定
 
