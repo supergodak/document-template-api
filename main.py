@@ -12,9 +12,9 @@ import os
 load_dotenv()
 
 # 環境変数の取得
-AWS_ACCESS_KEY = os.getenv("AWS_ACCESS_KEY_ID")
-AWS_SECRET_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-AWS_REGION = os.getenv("AWS_REGION", "ap-northeast-1")
+MY_AWS_ACCESS_KEY = os.getenv("MY_AWS_ACCESS_KEY_ID")
+MY_AWS_SECRET_KEY = os.getenv("MYAWS_SECRET_ACCESS_KEY")
+MY_AWS_REGION = os.getenv("MY_AWS_REGION", "ap-northeast-1")
 
 
 app = FastAPI()
@@ -22,9 +22,9 @@ app = FastAPI()
 # Boto3クライアントの作成
 s3_client = boto3.client(
     's3',
-    aws_access_key_id=AWS_ACCESS_KEY,
-    aws_secret_access_key=AWS_SECRET_KEY,
-    region_name=AWS_REGION
+    aws_access_key_id=MY_AWS_ACCESS_KEY,
+    aws_secret_access_key=MY_AWS_SECRET_KEY,
+    region_name=MY_AWS_REGION
 )
 
 class InputData(BaseModel):

@@ -2,3 +2,4 @@ fastapi
 openpyxl
 boto3
 python-dotenv
+xlwings
