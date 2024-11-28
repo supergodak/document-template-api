@@ -10,3 +10,4 @@ __pycache__/
 
 # Local Netlify folder
 .netlify
+.vercel

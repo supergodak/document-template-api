@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from mangum import Mangum  # Netlify Functions対応用
 import openpyxl
 import boto3
 import re
@@ -12,35 +12,36 @@ import os
 load_dotenv()
 
 # 環境変数の取得
-MY_AWS_ACCESS_KEY = os.getenv("MY_AWS_ACCESS_KEY_ID")
-MY_AWS_SECRET_KEY = os.getenv("MY_AWS_SECRET_ACCESS_KEY")
-MY_AWS_REGION = os.getenv("MY_AWS_REGION", "ap-northeast-1")
-
+AWS_ACCESS_KEY = os.getenv("MY_AWS_ACCESS_KEY_ID")
+AWS_SECRET_KEY = os.getenv("MY_AWS_SECRET_ACCESS_KEY")
+AWS_REGION = os.getenv("MY_AWS_REGION", "ap-northeast-1")
 
 app = FastAPI()
+
+@app.get("/")
+async def root():
+    return {"message": "Hello from Netlify!"}
+
+
 
 # Boto3クライアントの作成
 s3_client = boto3.client(
     's3',
-    aws_access_key_id=MY_AWS_ACCESS_KEY,
-    aws_secret_access_key=MY_AWS_SECRET_KEY,
-    region_name=MY_AWS_REGION
+    aws_access_key_id=AWS_ACCESS_KEY,
+    aws_secret_access_key=AWS_SECRET_KEY,
+    region_name=AWS_REGION
 )
-
-class InputData(BaseModel):
-    bucket_name: str
-    object_key: str
 
 # 正規表現でプレースホルダを見つけるパターン
 PLACEHOLDER_PATTERN = re.compile(r'\$\{[a-zA-Z0-9_]+\}')
 
 @app.post("/extract_placeholders")
-async def extract_placeholders(data: InputData):
+async def extract_placeholders(bucket_name: str, object_key: str):
     change_key_list = {}
 
     try:
         # S3からExcelファイルを取得
-        response = s3_client.get_object(Bucket=data.bucket_name, Key=data.object_key)
+        response = s3_client.get_object(Bucket=bucket_name, Key=object_key)
         excel_file = BytesIO(response['Body'].read())
         workbook = openpyxl.load_workbook(excel_file, data_only=False)
 
@@ -66,7 +67,7 @@ async def extract_placeholders(data: InputData):
 
         # 成功時のレスポンス
         return {
-            "template_id": data.object_key.split('/')[-1].split('.')[0],
+            "template_id": object_key.split('/')[-1].split('.')[0],
             "change_key_list": change_key_list
         }
 
@@ -74,10 +75,17 @@ async def extract_placeholders(data: InputData):
         logging.error(f"Error processing Excel file: {e}")
         # 失敗時のレスポンス
         return {
-            "template_id": data.object_key.split('/')[-1].split('.')[0],
+            "template_id": object_key.split('/')[-1].split('.')[0],
             "error": [str(e)],
             "change_key_list": {}
         }
+
+# Mangum ハンドラを作成（Netlify用）
+handler = Mangum(
+    app, 
+    lifespan='auto',  # デフォルト推奨
+    api_gateway_base_path=None,  # Netlifyの場合は通常Noneが適切
+)
 
 # ローカル実行用
 if __name__ == "__main__":
