@@ -13,7 +13,7 @@ load_dotenv()
 
 # 環境変数の取得
 MY_AWS_ACCESS_KEY = os.getenv("MY_AWS_ACCESS_KEY_ID")
-MY_AWS_SECRET_KEY = os.getenv("MYAWS_SECRET_ACCESS_KEY")
+MY_AWS_SECRET_KEY = os.getenv("MY_AWS_SECRET_ACCESS_KEY")
 MY_AWS_REGION = os.getenv("MY_AWS_REGION", "ap-northeast-1")
 
 
