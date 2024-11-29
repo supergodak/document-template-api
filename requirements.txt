@@ -1,6 +1,7 @@
 fastapi
+mangum
 openpyxl
 boto3
 python-dotenv
-xlwings
-mangum
+requests
+
