@@ -36,7 +36,7 @@ s3_client = boto3.client(
 )
 
 # 正規表現でプレースホルダを見つけるパターン
-PLACEHOLDER_PATTERN = re.compile(r'\$\{[a-zA-Z0-9_]+\}')
+PLACEHOLDER_PATTERN = re.compile(r'\$\{[^}]+\}')
 
 class ExtractPlaceholdersRequest(BaseModel):
     bucket_name: str
