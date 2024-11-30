@@ -7,6 +7,7 @@ __pycache__/
 
 
 .env
+vsaka/
 
 # Local Netlify folder
 .netlify
